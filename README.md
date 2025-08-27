@@ -1,6 +1,6 @@
-# ETL Dashboard with Airflow, MySQL, and Metabase
+# ETL Dashboard with Airflow, MySQL/Postgres, and Metabase/Superset Apache
 
-This project provides a local ETL and analytics environment using **Apache Airflow**, **MySQL**, and **Metabase**, containerized with Docker and orchestrated with Docker Compose.
+This project provides a local ETL and analytics environment using **Apache Airflow**, **MySQL/Postgres**, and **Metabase/Superset Apache**, containerized with Docker and orchestrated with Docker Compose.
 
 ## Features
 
