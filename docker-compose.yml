@@ -47,24 +47,36 @@ services:
       retries: 5
     networks:
       - etl-dashboard-network
-
-  metabase:
-    image: metabase/metabase:latest
-    container_name: metabase_webserver
+  
+  superset:
+    image: apache/superset:latest
+    container_name: superset_webserver
     ports:
-      - "3000:3000"
+      - "8088:8088"
     environment:
-      MB_DB_TYPE: postgres
-      MB_DB_DBNAME: metabase
-      MB_DB_PORT: 5432
-      MB_DB_USER: airflow
-      MB_DB_PASS: airflow
-      MB_DB_HOST: postgres
+      - SUPERSET_ENV=production
+      - SUPERSET_SECRET_KEY=dcc2fa1f0626330986d09ad29e12e748503bb900eb74ee56aa422010742e92cf
+      - SUPERSET_LOAD_EXAMPLES=yes
+      - SUPERSET_DATABASE_URI=postgresql+psycopg2://airflow:airflow@postgres:5432/superset\
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin
+      - ADMIN_FIRSTNAME=Superset
+      - ADMIN_LASTNAME=Admin
+      - ADMIN_EMAIL=admin@example.com
+    command: >
+      sh -c "superset db upgrade &&
+            superset fab create-admin --username $$ADMIN_USERNAME --firstname $$ADMIN_FIRSTNAME --lastname $$ADMIN_LASTNAME --email $$ADMIN_EMAIL --password $$ADMIN_PASSWORD || true &&
+            superset init &&
+            superset run -h 0.0.0.0 -p 8088"
+
     volumes:
-      - metabase:/metabase-data
+      - superset:/app/superset_home
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - etl-dashboard-network
-  
+
   airflow-webserver:
     <<: *airflow-common
     container_name: airflow_webserver
@@ -95,7 +107,7 @@ services:
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
 
 volumes:
-    metabase:
+    superset:
     postgres-db-volume:
 
 networks:

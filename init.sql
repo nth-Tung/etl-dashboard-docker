@@ -1,7 +1,7 @@
 -- Tạo database weatherdb
 CREATE DATABASE weatherdb;
 
-CREATE DATABASE metabase OWNER airflow;
+CREATE DATABASE superset OWNER airflow;
 
 \connect weatherdb;
 
