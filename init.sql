@@ -1,10 +1,14 @@
-CREATE DATABASE IF NOT EXISTS weatherdb;
-USE weatherdb;
+-- Tạo database weatherdb
+CREATE DATABASE weatherdb;
+
+CREATE DATABASE metabase OWNER airflow;
+
+\connect weatherdb;
 
 CREATE TABLE IF NOT EXISTS weather_data (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   city VARCHAR(50),
-  temperature FLOAT,
+  temperature REAL,
   humidity INT,
-  datetime DATETIME
+  datetime TIMESTAMP
 );

@@ -2,16 +2,17 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import requests
-import mysql.connector
+import psycopg2  # <-- dùng psycopg2 thay cho mysql.connector
 
 # Config
 API_KEY = "c7c9b5c93d52cf6d6d0204e1e58df0de"  # Thay bằng API key thật
 CITY = "Ho Chi Minh"
 DB_CONFIG = {
-    'host': 'mysql',
-    'user': 'root',
-    'password': 'root',
-    'database': 'weatherdb'
+    'host': 'postgres',      # container name của postgres trong docker-compose
+    'user': 'airflow',       # user Postgres
+    'password': 'airflow',   # password Postgres
+    'dbname': 'weatherdb',   # database name
+    'port': 5432
 }
 
 # Extract
@@ -32,15 +33,22 @@ def transform_data(ti):
 # Load
 def load_data(ti):
     data = ti.xcom_pull(task_ids="transform")
+    conn = None
+    cursor = None
     try:
-        conn = mysql.connector.connect(**DB_CONFIG)
+        conn = psycopg2.connect(**DB_CONFIG)
         cursor = conn.cursor()
-        sql = "INSERT INTO weather_data (city, temperature, humidity, datetime) VALUES (%s, %s, %s, %s)"
+        sql = """
+        INSERT INTO weather_data (city, temperature, humidity, datetime)
+        VALUES (%s, %s, %s, %s)
+        """
         cursor.execute(sql, (data["city"], data["temperature"], data["humidity"], data["datetime"]))
         conn.commit()
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 # DAG
 default_args = {
@@ -53,9 +61,9 @@ default_args = {
 }
 
 with DAG(
-    "weather_pipeline",
+    "weather_pipeline_postgres",
     default_args=default_args,
-    description="ETL weather data from OpenWeather API to MySQL",
+    description="ETL weather data from OpenWeather API to Postgres",
     schedule_interval=timedelta(hours=1),
     start_date=datetime(2025, 8, 25),
     catchup=False,
