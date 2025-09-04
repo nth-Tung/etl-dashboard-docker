@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import WeatherSearch from "../components/WeatherSearch";
 import WeatherInfo from "../components/WeatherInfo";
-import SupersetEmbed from "../components/SupersetEmbed";
+import MetabaseEmbed from "../components/MetabaseEmbed";
 
 
-const SUPERSET_EMBED_URL = "http://localhost:8088/superset/explore/?form_data=%7B%7D"; // Update this to your chart/dashboard
+const METABASE_EMBED_URL = "http://localhost:3001/public/dashboard/0dac7688-ec78-446a-9206-7dc056ab5c98"; // Thay bằng link public dashboard của bạn
 
 const LANGUAGES = {
   vi: {
@@ -102,14 +102,12 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-6 text-blue-800">{LANGUAGES[lang].title}</h1>
       <WeatherSearch
         onSearch={handleSearch}
-        onSuggest={handleSuggest}
         suggestions={suggestions}
-        searching={searching}
         placeholder={LANGUAGES[lang].searchPlaceholder}
         searchBtnText={LANGUAGES[lang].searchBtn}
       />
       <WeatherInfo weather={weather} loading={loading} error={error} />
-      <SupersetEmbed src={SUPERSET_EMBED_URL} />
+      <MetabaseEmbed src={METABASE_EMBED_URL} />
     </div>
   );
 }
