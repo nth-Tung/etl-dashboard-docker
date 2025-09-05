@@ -1,8 +1,9 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import requests
 import psycopg2  # <-- dùng psycopg2 thay cho mysql.connector
+import zoneinfo
 
 # Config
 API_KEY = "c7c9b5c93d52cf6d6d0204e1e58df0de"  # Thay bằng API key thật
@@ -41,6 +42,7 @@ def extract_data():
 def transform_data(ti):
     raw_data = ti.xcom_pull(task_ids="extract")
     transformed = []
+    vn_tz = zoneinfo.ZoneInfo("Asia/Ho_Chi_Minh")
     for city, data in raw_data.items():
         temperature_c = data['main']['temp']
         temp_min = data['main'].get('temp_min')
@@ -50,7 +52,9 @@ def transform_data(ti):
         wind_speed = data.get('wind', {}).get('speed')
         weather_desc = data.get('weather', [{}])[0].get('description')
         weather_icon = data.get('weather', [{}])[0].get('icon')
-        dt = datetime.utcfromtimestamp(data['dt'])
+        # Chuyển đổi sang giờ Việt Nam chuẩn Airflow
+        dt_utc = datetime.utcfromtimestamp(data['dt'])
+        dt_vn = dt_utc.replace(tzinfo=timezone.utc).astimezone(vn_tz)
         transformed.append({
             "city": city,
             "temperature": temperature_c,
@@ -61,7 +65,7 @@ def transform_data(ti):
             "wind_speed": wind_speed,
             "weather_desc": weather_desc,
             "weather_icon": weather_icon,
-            "datetime": dt
+            "datetime": dt_vn
         })
     return transformed
 
@@ -106,7 +110,7 @@ with DAG(
     "weather_pipeline_postgres",
     default_args=default_args,
     description="ETL weather data from OpenWeather API to Postgres",
-    schedule_interval=timedelta(minutes=15),
+    schedule_interval=timedelta(minutes=1),
     start_date=datetime(2025, 8, 25),
     catchup=False,
 ) as dag:

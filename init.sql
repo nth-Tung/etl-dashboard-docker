@@ -1,7 +1,7 @@
 -- Tạo database weatherdb
 CREATE DATABASE weatherdb;
 
-CREATE DATABASE superset OWNER airflow;
+CREATE DATABASE metabase OWNER airflow;
 
 \connect weatherdb;
 
@@ -16,5 +16,5 @@ CREATE TABLE IF NOT EXISTS weather_data (
   wind_speed REAL,
   weather_desc VARCHAR(100),
   weather_icon VARCHAR(10),
-  datetime TIMESTAMP
+  datetime TIMESTAMPTZ
 );
