@@ -2,12 +2,11 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta, timezone
 import requests
-import psycopg2  # <-- dùng psycopg2 thay cho mysql.connector
-import zoneinfo
+import psycopg2
 
 # Config
-API_KEY = "c7c9b5c93d52cf6d6d0204e1e58df0de"  # Thay bằng API key thật
-# Danh sách các thành phố lớn ở Việt Nam với lat/lon chuẩn
+API_KEY = "Your-API-KEY"
+
 CITIES = [
     {"name": "Ha Noi", "lat": 21.0285, "lon": 105.8542},
     {"name": "Ho Chi Minh", "lat": 10.7769, "lon": 106.7009},
@@ -21,7 +20,7 @@ CITIES = [
     {"name": "Buon Ma Thuot", "lat": 12.6667, "lon": 108.0378}
 ]
 DB_CONFIG = {
-    'host': 'postgres',      # container name của postgres trong docker-compose
+    'host': 'postgres',      # container name
     'user': 'airflow',       # user Postgres
     'password': 'airflow',   # password Postgres
     'dbname': 'weatherdb',   # database name
@@ -52,7 +51,6 @@ def transform_data(ti):
         wind_speed = data.get('wind', {}).get('speed')
         weather_desc = data.get('weather', [{}])[0].get('description')
         weather_icon = data.get('weather', [{}])[0].get('icon')
-        # Chuyển đổi sang giờ Việt Nam chuẩn Airflow
         dt_utc = datetime.utcfromtimestamp(data['dt'])
         dt_vn = dt_utc.replace(tzinfo=timezone.utc).astimezone(vn_tz)
         transformed.append({

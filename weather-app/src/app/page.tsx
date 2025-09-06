@@ -32,7 +32,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Danh sách cứng các thành phố lớn Việt Nam (giống pipeline)
   const CITY_SUGGESTIONS = [
     { name: "Ha Noi" },
     { name: "Ho Chi Minh" },
@@ -49,7 +48,6 @@ export default function Home() {
   const [searching, setSearching] = useState(false);
   const [lang, setLang] = useState<'vi' | 'en'>('en');
 
-  // Gợi ý location bằng filter local
   const handleSuggest = (query: string) => {
     if (!query) {
       setSuggestions(CITY_SUGGESTIONS);
@@ -66,13 +64,12 @@ export default function Home() {
     }, 100);
   };
 
-  // Khi chọn location từ gợi ý hoặc nhập đúng tên
   const handleSearch = async (location: string) => {
     setLoading(true);
     setError(null);
     setWeather(null);
     try {
-      const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || "c7c9b5c93d52cf6d6d0204e1e58df0de";
+      const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || "your_api_key_here";
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric&lang=${lang}`
       );
