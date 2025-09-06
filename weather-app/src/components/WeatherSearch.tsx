@@ -75,7 +75,7 @@ const WeatherSearch: React.FC<WeatherSearchProps> = ({ onSearch, suggestions = [
         </div>
         <button
           type="submit"
-          className="btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          className="btn bg-blue-500 text-white px-6 py-2 rounded flex items-center justify-center h-full hover:bg-blue-600 transition whitespace-nowrap min-w-[110px]"
         >
           {searchBtnText}
         </button>

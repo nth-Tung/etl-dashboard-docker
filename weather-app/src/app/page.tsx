@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import WeatherSearch from "../components/WeatherSearch";
 import WeatherInfo from "../components/WeatherInfo";
 import MetabaseEmbed from "../components/MetabaseEmbed";
+import Head from "next/head";
 
 
 const METABASE_EMBED_URL = "http://localhost:3001/public/dashboard/0dac7688-ec78-446a-9206-7dc056ab5c98"; // Thay bằng link public dashboard của bạn
 
 const LANGUAGES = {
   vi: {
-    title: "Bảng điều khiển thời tiết",
+    title: "Weather Dashboard",
     searchPlaceholder: "Nhập địa điểm...",
     searchBtn: "Tìm kiếm",
     loading: "Đang tải...",
@@ -25,8 +26,6 @@ const LANGUAGES = {
     error: "Error fetching weather"
   }
 };
-
-
 
 export default function Home() {
   const [weather, setWeather] = useState<any>(null);
@@ -88,26 +87,31 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 flex flex-col items-center py-10 px-4">
-      <div className="flex justify-end w-full max-w-2xl mb-2">
-        <button
-          className={`px-3 py-1 rounded-l ${lang === 'en' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}
-          onClick={() => setLang('en')}
-        >EN</button>
-        <button
-          className={`px-3 py-1 rounded-r ${lang === 'vi' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}
-          onClick={() => setLang('vi')}
-        >VI</button>
+    <>
+      <Head>
+        <title>Weather Dashboard</title>
+      </Head>
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 flex flex-col items-center py-10 px-4">
+        <div className="flex justify-end w-full max-w-2xl mb-2">
+          <button
+            className={`px-3 py-1 rounded-l ${lang === 'en' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}
+            onClick={() => setLang('en')}
+          >EN</button>
+          <button
+            className={`px-3 py-1 rounded-r ${lang === 'vi' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}
+            onClick={() => setLang('vi')}
+          >VI</button>
+        </div>
+        <h1 className="text-3xl font-bold mb-6 text-blue-800">{LANGUAGES[lang].title}</h1>
+        <WeatherSearch
+          onSearch={handleSearch}
+          suggestions={suggestions}
+          placeholder={LANGUAGES[lang].searchPlaceholder}
+          searchBtnText={LANGUAGES[lang].searchBtn}
+        />
+        <WeatherInfo weather={weather} loading={loading} error={error} />
+        <MetabaseEmbed src={METABASE_EMBED_URL} />
       </div>
-      <h1 className="text-3xl font-bold mb-6 text-blue-800">{LANGUAGES[lang].title}</h1>
-      <WeatherSearch
-        onSearch={handleSearch}
-        suggestions={suggestions}
-        placeholder={LANGUAGES[lang].searchPlaceholder}
-        searchBtnText={LANGUAGES[lang].searchBtn}
-      />
-      <WeatherInfo weather={weather} loading={loading} error={error} />
-      <MetabaseEmbed src={METABASE_EMBED_URL} />
-    </div>
+    </>
   );
 }
