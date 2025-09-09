@@ -69,7 +69,7 @@ export default function Home() {
     setError(null);
     setWeather(null);
     try {
-      const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || "your_api_key_here";
+      const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || "your_openweather_api_key"; // Thay bằng API key của bạn
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric&lang=${lang}`
       );
@@ -106,7 +106,7 @@ export default function Home() {
           placeholder={LANGUAGES[lang].searchPlaceholder}
           searchBtnText={LANGUAGES[lang].searchBtn}
         />
-        <WeatherInfo weather={weather} loading={loading} error={error} />
+        <WeatherInfo weather={weather} loading={loading} error={error} lang={lang} />
         <MetabaseEmbed src={METABASE_EMBED_URL} />
       </div>
     </>

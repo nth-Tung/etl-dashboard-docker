@@ -9,13 +9,27 @@ interface WeatherInfoProps {
   } | null;
   loading: boolean;
   error: string | null;
+  lang?: 'vi' | 'en'; // Thêm prop lang
 }
 
-const WeatherInfo: React.FC<WeatherInfoProps> = ({ weather, loading, error }) => {
-  if (loading) return <div className="text-blue-500">Loading...</div>;
+const LABELS = {
+  vi: {
+    temperature: 'Nhiệt độ',
+    humidity: 'Độ ẩm',
+    wind: 'Gió',
+  },
+  en: {
+    temperature: 'Temperature',
+    humidity: 'Humidity',
+    wind: 'Wind',
+  }
+};
+
+const WeatherInfo: React.FC<WeatherInfoProps> = ({ weather, loading, error, lang = 'en' }) => {
+  if (loading) return <div className="text-blue-500">{lang === 'vi' ? 'Đang tải...' : 'Loading...'}</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!weather) return null;
-
+  const labels = LABELS[lang];
   return (
     <div className="bg-white rounded shadow p-4 mb-6 w-full max-w-md mx-auto">
       <div className="flex items-center gap-4 mb-2">
@@ -30,9 +44,9 @@ const WeatherInfo: React.FC<WeatherInfoProps> = ({ weather, loading, error }) =>
         </div>
       </div>
       <div className="flex flex-col gap-1">
-        <span>Temperature: <b>{weather.main.temp}°C</b></span>
-        <span>Humidity: <b>{weather.main.humidity}%</b></span>
-        <span>Wind: <b>{weather.wind.speed} m/s</b></span>
+        <span>{labels.temperature}: <b>{weather.main.temp}°C</b></span>
+        <span>{labels.humidity}: <b>{weather.main.humidity}%</b></span>
+        <span>{labels.wind}: <b>{weather.wind.speed} m/s</b></span>
       </div>
     </div>
   );

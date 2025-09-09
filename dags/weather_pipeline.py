@@ -3,9 +3,10 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta, timezone
 import requests
 import psycopg2
+import zoneinfo
 
 # Config
-API_KEY = "Your-API-KEY"
+API_KEY = "your_openweather_api_key"
 
 CITIES = [
     {"name": "Ha Noi", "lat": 21.0285, "lon": 105.8542},
